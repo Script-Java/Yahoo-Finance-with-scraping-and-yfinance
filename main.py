@@ -1,20 +1,28 @@
 import yfinance as yf
+from list import symbol_list
 import streamlit as st
-from symbol_list import symbol_list_2
+import pprint
+
+st.write("YFinance with python")
+st.write("Choose some tickers on the sidebar to get started")
 
 with st.sidebar:
-    options = st.multiselect(
-        "Choose currency",
-        symbol_list_2
-    )
+  options = st.multiselect("Symbol Tickers", symbol_list)
 
-options = ["BTC-USD", "ETH-USD", "ADA-USD"]
 
-def create_symbol_data():
-    for symbol in options:
-        currency = yf.Ticker(symbol)
-        print(currency)
-        print(currency.info)
+def get_ticker_data(options):
+  for tickers in options:
+    ticks = yf.Ticker(tickers)
+    data = ticks.info
+    name = data["shortName"]
+    price = data["regularMarketPrice"]
+    description = data["description"]
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Name", name, "")
+    col2.metric("Price", price, "")
+    col3.metric("Description", description, "")
+    
 
-create_symbol_data()
 
+if options != []:
+  get_ticker_data(options)
